@@ -34,5 +34,29 @@ todos_schema = TodoSchema(many=True)
 def home():
     return "<h1>Todo Flask API</h1>"
 
+@app.route("/todo", methods=["POST"])
+def add_todo():
+    title = request.json["title"]
+    done = request.json["done"]
+
+    new_todo = Todo(title, done)
+
+    db.session.add(new_todo)
+    db.session.commit()
+
+    todo = Todo.query.get(new_todo.id)
+    return todo_schema.json(todo)
+
+@app.route("/todo/<id>", methods=["PATCH"])
+def update_todo(id):
+    todo = Todo.query.get(id)
+
+    new_done = request.json["done"]
+    todo.done = mew_done
+
+    db.session.commit()
+    return todo_schema.jsonify(todo)
+
 if __name__ == "__main__":
     app.run(debug=True)
+
